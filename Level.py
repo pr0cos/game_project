@@ -60,7 +60,6 @@ class Level(Board):
                         except IndexError:
                             pass
 
-
-
-
-
+    def on_click(self, cell):
+        self.board[int(cell[1])][int(cell[0])].kill()
+        self.board[int(cell[1])][int(cell[0])] = 0

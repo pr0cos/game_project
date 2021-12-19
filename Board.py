@@ -25,11 +25,15 @@ class Board:
         y0 = y // self.cell_size
         if x0 < 0 or x0 >= self.width or y0 < 0 or y0 >= self.height:
             return None
-        return x0, y0
+        cell = (x0, y0)
+        return cell
 
     def on_click(self, cell):
         pass
 
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
-        self.on_click(cell)
+        if cell is not None and self.board[int(cell[1])][int(cell[0])] != 0:
+            self.on_click(cell)
+            return True
+        return False

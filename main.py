@@ -40,6 +40,8 @@ if __name__ == '__main__':
         for i in range(len(bullets)):
             bullets[i][1] -= v_bullet / fps
             pygame.draw.rect(screen, (255, 255, 255), (bullets[i][0], bullets[i][1], 2, 10))
+            if board.get_click(bullets[i]):
+                to_del.append(i)
             if bullets[i][1] < 0:
                 to_del.append(i)
         for i in to_del:
