@@ -4,6 +4,7 @@ from Background import Background
 from Level import Level
 from Player import Player
 import time
+from level_number import Number
 
 
 def main():
@@ -56,6 +57,7 @@ def level(num):
     background = Background(bg)
     pl = pygame.sprite.Group()
     player = Player(pl)
+    level = Number(num, bg)
     board = Level(9, 4, num)
     v_player = 300
     v_bullet = 300
