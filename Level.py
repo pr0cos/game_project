@@ -55,7 +55,6 @@ class Level(Board):
                             x0 = x + cell[0]
                             y0 = y + cell[1]
                             if x0 >= 0 and y >= 0:
-                                print(x, y, '    ', x0, y0)
                                 if self.board[y0][x0] == 0:
                                     self.board[y0][x0], self.board[y][x] = self.board[y][x], self.board[y0][x0]
                                     self.board[y0][x0].was_moved = True
