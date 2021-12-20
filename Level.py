@@ -47,18 +47,27 @@ class Level(Board):
         cells = ((-1, 0), (0, -1), (1, 0), (0, 1))
         for x in range(self.width):
             for y in range(self.height):
-                if self.board[y][x] != 0:
+                if self.board[y][x] != 0 and not self.board[y][x].was_moved:
                     c = random.choices(cells, k=4)
+                    flag = False
                     for cell in c:
                         try:
                             x0 = x + cell[0]
                             y0 = y + cell[1]
-                            if x0 >= 0 and y0 >= 0:
+                            if x0 >= 0 and y >= 0:
+                                print(x, y, '    ', x0, y0)
                                 if self.board[y0][x0] == 0:
                                     self.board[y0][x0], self.board[y][x] = self.board[y][x], self.board[y0][x0]
-                                break
+                                    self.board[y0][x0].was_moved = True
+                                    flag = True
                         except IndexError:
                             pass
+                        if flag:
+                            break
+        for x in range(self.width):
+            for y in range(self.height):
+                if self.board[y][x] != 0:
+                    self.board[y][x].was_moved = False
 
     def on_click(self, cell):
         self.board[int(cell[1])][int(cell[0])].kill()

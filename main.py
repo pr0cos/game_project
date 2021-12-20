@@ -1,21 +1,24 @@
-from img_load import screen
+from img_load import load_image, screen
 import pygame
 from Background import Background
 from Level import Level
 from Player import Player
+import time
 
 
-if __name__ == '__main__':
+def level(num):
+    pygame.init()
+    level_screen(num)
     running = True
     NEXTMOVE = pygame.USEREVENT + 1
-    pygame.time.set_timer(NEXTMOVE, 6000)
+    pygame.time.set_timer(NEXTMOVE, 4000)
     bg = pygame.sprite.Group()
     background = Background(bg)
     pl = pygame.sprite.Group()
     player = Player(pl)
-    board = Level(9, 4, 4)
+    board = Level(9, 4, num)
     v_player = 120
-    v_bullet = 120
+    v_bullet = 300
     fps = 60
     time = pygame.time.Clock()
     bullets = []
@@ -46,6 +49,47 @@ if __name__ == '__main__':
                 to_del.append(i)
         for i in to_del:
             bullets.pop(i)
+        if board.board == [[0] * 9 for _ in range(4)]:
+            return 0
         board.render(screen)
+        pygame.display.flip()
+    pygame.quit()
+
+
+def level_screen(num):
+    pygame.init()
+    bg = pygame.sprite.Group()
+    background = Background(bg)
+    screen.fill((0, 0, 0))
+    font = pygame.font.Font('font/Kemco Pixel Bold.ttf', 50)
+    text = font.render(f"LEVEL {num}", True, (255, 255, 255))
+    text_x = background.rect.w // 2 - text.get_width() // 2
+    text_y = background.rect.h // 2 - text.get_height() // 2
+    bg.draw(screen)
+    screen.blit(text, (text_x, text_y))
+    pygame.display.flip()
+    time.sleep(1)
+
+
+if __name__ == '__main__':
+    running = True
+    menu = pygame.sprite.Group()
+    bg = Background(menu)
+    play_button = pygame.sprite.Sprite(menu)
+    play_button.image = load_image('play_button.png', colorkey=-1)
+    play_button.rect = play_button.image.get_rect()
+    play_button.rect.x = (bg.rect.w - play_button.rect.w) // 2
+    play_button.rect.y = (bg.rect.h - play_button.rect.h) // 2
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1 and play_button.rect.collidepoint(event.pos):
+                    for i in range(1, 14 + 1):
+                        level(i)
+                    running = False
+        screen.fill((0, 0, 0))
+        menu.draw(screen)
         pygame.display.flip()
     pygame.quit()
