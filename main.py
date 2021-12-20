@@ -11,13 +11,29 @@ def level(num):
     level_screen(num)
     running = True
     NEXTMOVE = pygame.USEREVENT + 1
+    ALIEN1_ATTACK = pygame.USEREVENT + 2
+    ALIEN2_ATTACK = pygame.USEREVENT + 3
+    ALIEN3_ATTACK = pygame.USEREVENT + 4
+    ALIEN4_ATTACK = pygame.USEREVENT + 5
+    ALIEN5_ATTACK = pygame.USEREVENT + 6
+    ALIEN6_ATTACK = pygame.USEREVENT + 7
+    ALIEN7_ATTACK = pygame.USEREVENT + 8
+    ALIEN8_ATTACK = pygame.USEREVENT + 9
     pygame.time.set_timer(NEXTMOVE, 4000)
+    pygame.time.set_timer(ALIEN1_ATTACK, 2000)
+    pygame.time.set_timer(ALIEN2_ATTACK, 3000)
+    pygame.time.set_timer(ALIEN3_ATTACK, 4000)
+    pygame.time.set_timer(ALIEN4_ATTACK, 3500)
+    pygame.time.set_timer(ALIEN5_ATTACK, 2500)
+    pygame.time.set_timer(ALIEN6_ATTACK, 3500)
+    pygame.time.set_timer(ALIEN7_ATTACK, 4000)
+    pygame.time.set_timer(ALIEN8_ATTACK, 2750)
     bg = pygame.sprite.Group()
     background = Background(bg)
     pl = pygame.sprite.Group()
     player = Player(pl)
     board = Level(9, 4, num)
-    v_player = 120
+    v_player = 300
     v_bullet = 300
     fps = 60
     time = pygame.time.Clock()
@@ -31,6 +47,22 @@ def level(num):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     bullets.append([player.rect.x + player.rect.w // 2 - 1, player.rect.y - 10])
+            if event.type == ALIEN1_ATTACK:
+                board.attack(1)
+            if event.type == ALIEN2_ATTACK:
+                board.attack(2)
+            if event.type == ALIEN3_ATTACK:
+                board.attack(3)
+            if event.type == ALIEN4_ATTACK:
+                board.attack(4)
+            if event.type == ALIEN5_ATTACK:
+                board.attack(5)
+            if event.type == ALIEN6_ATTACK:
+                board.attack(6)
+            if event.type == ALIEN7_ATTACK:
+                board.attack(7)
+            if event.type == ALIEN8_ATTACK:
+                board.attack(8)
         screen.fill((0, 0, 0))
         if pygame.key.get_pressed()[pygame.K_LEFT] and player.rect.x > 0:
             player.rect.x -= v_player / fps
@@ -40,15 +72,22 @@ def level(num):
         bg.draw(screen)
         pl.draw(screen)
         to_del = []
-        for i in range(len(bullets)):
-            bullets[i][1] -= v_bullet / fps
-            pygame.draw.rect(screen, (255, 255, 255), (bullets[i][0], bullets[i][1], 2, 10))
-            if board.get_click(bullets[i]):
-                to_del.append(i)
-            if bullets[i][1] < 0:
-                to_del.append(i)
+        for bullet in bullets:
+            bullet[1] -= v_bullet / fps
+            pygame.draw.rect(screen, (255, 255, 255), (bullet[0], bullet[1], 2, 10))
+            if board.get_click(bullet):
+                bullets.pop(bullets.index(bullet))
+            if bullet[1] < 0:
+                bullets.pop(bullets.index(bullet))
         for i in to_del:
             bullets.pop(i)
+        for bullet in board.bullets:
+            bullet[0][1] += v_bullet / fps
+            pygame.draw.rect(screen, bullet[1], (bullet[0][0], bullet[0][1], 2, 10))
+            if player.rect.collidepoint(bullet[0]):
+                pygame.quit()
+            if bullet[0][1] > 700:
+                board.bullets.pop(board.bullets.index(bullet))
         if board.board == [[0] * 9 for _ in range(4)]:
             return 0
         board.render(screen)

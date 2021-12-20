@@ -10,6 +10,7 @@ class Level(Board):
         super().__init__(width, height)
         self.lvl_number = lvl_number
         self.enemies = pygame.sprite.Group()
+        self.bullets = []
         for _ in range(self.lvl_number * 2):
             while True:
                 x = random.randrange(0, self.height)
@@ -71,3 +72,61 @@ class Level(Board):
     def on_click(self, cell):
         self.board[int(cell[1])][int(cell[0])].kill()
         self.board[int(cell[1])][int(cell[0])] = 0
+
+    def attack(self, num):
+        if num == 1:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if type(self.board[y][x]) is Alien1:
+                        self.bullets.append([[self.left + self.cell_size * (x + 0.5),
+                                              self.top + self.cell_size * (y + 1)],
+                                             self.board[y][x].bullet_color])
+        if num == 2:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if type(self.board[y][x]) is Alien2:
+                        self.bullets.append([[self.left + self.cell_size * (x + 0.5),
+                                              self.top + self.cell_size * (y + 1)],
+                                             self.board[y][x].bullet_color])
+        if num == 3:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if type(self.board[y][x]) is Alien3:
+                        self.bullets.append([[self.left + self.cell_size * (x + 0.5),
+                                              self.top + self.cell_size * (y + 1)],
+                                             self.board[y][x].bullet_color])
+        if num == 4:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if type(self.board[y][x]) is Alien4:
+                        self.bullets.append([[self.left + self.cell_size * (x + 0.5),
+                                              self.top + self.cell_size * (y + 1)],
+                                             self.board[y][x].bullet_color])
+        if num == 5:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if type(self.board[y][x]) is Alien5:
+                        self.bullets.append([[self.left + self.cell_size * (x + 0.5),
+                                              self.top + self.cell_size * (y + 1)],
+                                             self.board[y][x].bullet_color])
+        if num == 6:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if type(self.board[y][x]) is Alien6:
+                        self.bullets.append([[self.left + self.cell_size * (x + 0.5),
+                                              self.top + self.cell_size * (y + 1)],
+                                             self.board[y][x].bullet_color])
+        if num == 7:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if type(self.board[y][x]) is Alien7:
+                        self.bullets.append([[self.left + self.cell_size * (x + 0.5),
+                                              self.top + self.cell_size * (y + 1)],
+                                             self.board[y][x].bullet_color])
+        if num == 8:
+            for x in range(self.width):
+                for y in range(self.height):
+                    if type(self.board[y][x]) is Alien8:
+                        self.bullets.append([[self.left + self.cell_size * (x + 0.5),
+                                              self.top + self.cell_size * (y + 1)],
+                                             self.board[y][x].bullet_color])

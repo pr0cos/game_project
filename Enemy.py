@@ -12,6 +12,7 @@ class Alien1(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
         self.was_moved = False
+        self.bullet_color = (163, 73, 164)
 
     def update(self, *args):
         pass
@@ -27,6 +28,7 @@ class Alien2(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
         self.was_moved = False
+        self.bullet_color = (15, 179, 28)
 
     def update(self, *args):
         pass
@@ -42,6 +44,7 @@ class Alien3(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
         self.was_moved = False
+        self.bullet_color = (63, 72, 204)
 
     def update(self, *args):
         pass
@@ -57,6 +60,7 @@ class Alien4(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
         self.was_moved = False
+        self.bullet_color = (213, 213, 13)
 
     def update(self, *args):
         pass
@@ -72,6 +76,7 @@ class Alien5(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
         self.was_moved = False
+        self.bullet_color = (236, 13, 80)
 
     def update(self, *args):
         pass
@@ -87,6 +92,7 @@ class Alien6(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
         self.was_moved = False
+        self.bullet_color = (0, 0, 160)
 
     def update(self, *args):
         pass
@@ -102,6 +108,7 @@ class Alien7(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
         self.was_moved = False
+        self.bullet_color = (237, 64, 191)
 
     def update(self, *args):
         pass
@@ -117,6 +124,7 @@ class Alien8(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
         self.was_moved = False
+        self.bullet_color = (70, 220, 232)
 
     def update(self, *args):
         pass
