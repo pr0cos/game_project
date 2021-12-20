@@ -6,6 +6,30 @@ from Player import Player
 import time
 
 
+def main():
+    running = True
+    menu = pygame.sprite.Group()
+    bg = Background(menu)
+    play_button = pygame.sprite.Sprite(menu)
+    play_button.image = load_image('play_button.png', colorkey=-1)
+    play_button.rect = play_button.image.get_rect()
+    play_button.rect.x = (bg.rect.w - play_button.rect.w) // 2
+    play_button.rect.y = (bg.rect.h - play_button.rect.h) // 2
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1 and play_button.rect.collidepoint(event.pos):
+                    for i in range(1, 14 + 1):
+                        level(i)
+                    running = False
+        screen.fill((0, 0, 0))
+        menu.draw(screen)
+        pygame.display.flip()
+    pygame.quit()
+
+
 def level(num):
     pygame.init()
     level_screen(num)
@@ -85,7 +109,7 @@ def level(num):
             bullet[0][1] += v_bullet / fps
             pygame.draw.rect(screen, bullet[1], (bullet[0][0], bullet[0][1], 2, 10))
             if player.rect.collidepoint(bullet[0]):
-                pygame.quit()
+                game_over()
             if bullet[0][1] > 700:
                 board.bullets.pop(board.bullets.index(bullet))
         if board.board == [[0] * 9 for _ in range(4)]:
@@ -110,25 +134,35 @@ def level_screen(num):
     time.sleep(1)
 
 
-if __name__ == '__main__':
-    running = True
+def game_over():
+    pygame.init()
     menu = pygame.sprite.Group()
-    bg = Background(menu)
-    play_button = pygame.sprite.Sprite(menu)
-    play_button.image = load_image('play_button.png', colorkey=-1)
-    play_button.rect = play_button.image.get_rect()
-    play_button.rect.x = (bg.rect.w - play_button.rect.w) // 2
-    play_button.rect.y = (bg.rect.h - play_button.rect.h) // 2
+    background = Background(menu)
+    retry_button = pygame.sprite.Sprite(menu)
+    retry_button.image = load_image('retry_button.png', colorkey=-1)
+    retry_button.rect = retry_button.image.get_rect()
+    retry_button.rect.x = (background.rect.w - retry_button.rect.w) // 2
+    retry_button.rect.y = (background.rect.h - retry_button.rect.h) // 2
+    screen.fill((0, 0, 0))
+    font = pygame.font.Font('font/Kemco Pixel Bold.ttf', 50)
+    text = font.render("GAME OVER", True, (255, 255, 255))
+    text_x = background.rect.w // 2 - text.get_width() // 2
+    text_y = 100
+    menu.draw(screen)
+    screen.blit(text, (text_x, text_y))
+    pygame.display.flip()
+    running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and play_button.rect.collidepoint(event.pos):
-                    for i in range(1, 14 + 1):
-                        level(i)
+                if event.button == 1 and retry_button.rect.collidepoint(event.pos):
+                    main()
                     running = False
-        screen.fill((0, 0, 0))
-        menu.draw(screen)
-        pygame.display.flip()
-    pygame.quit()
+                    pygame.quit()
+
+
+if __name__ == '__main__':
+    main()
