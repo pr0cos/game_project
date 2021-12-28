@@ -30,6 +30,18 @@ def main():
     text2.rect = text2.image.get_rect()
     text2.rect.x = bg.rect.w // 2 - text2.rect.w // 2
     text2.rect.y = 150
+    text3 = pygame.sprite.Sprite(menu)
+    text3.image = font.render("HIGH SCORE:", True, (255, 255, 255))
+    text3.rect = text3.image.get_rect()
+    text3.rect.x = bg.rect.w // 2 - text3.rect.w // 2
+    text3.rect.y = play_button.rect.y + play_button.rect.h + 50
+    text_score = pygame.sprite.Sprite(menu)
+    with open('score.txt') as sc:
+        score = int(sc.read().strip())
+    text_score.image = font.render(f"{score}", True, (255, 255, 255))
+    text_score.rect = text_score.image.get_rect()
+    text_score.rect.x = bg.rect.w // 2 - text_score.rect.w // 2
+    text_score.rect.y = text3.rect.y + text3.rect.h + 50
     menu.draw(screen)
     pygame.display.flip()
     while running:
@@ -38,18 +50,20 @@ def main():
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1 and play_button.rect.collidepoint(event.pos):
+                    score = 0
                     for i in range(1, 14 + 1):
-                        level(i)
-                    boss_fight()
+                        score = level(i, score)
+                    boss_fight(score)
                     running = False
     pygame.quit()
 
 
-def level(num):
+def level(num, score):
     pygame.init()
     level_screen(num)
     paused = False
     running = True
+    score = score
     NEXTMOVE = pygame.USEREVENT + 1
     ALIEN1_ATTACK = pygame.USEREVENT + 2
     ALIEN2_ATTACK = pygame.USEREVENT + 3
@@ -120,19 +134,23 @@ def level(num):
                 bullet[1] -= v_bullet / fps
                 pygame.draw.rect(screen, (255, 255, 255), (bullet[0], bullet[1], 2, 10))
                 if board.get_click(bullet):
+                    score += 50
                     bullets.pop(bullets.index(bullet))
                 if bullet[1] < 0:
                     bullets.pop(bullets.index(bullet))
+                    if score - 10 >= 0:
+                        score -= 10
             for bullet in board.bullets:
                 bullet[0][1] += v_bullet / fps
                 pygame.draw.rect(screen, bullet[1], (bullet[0][0], bullet[0][1], 2, 10))
                 if player.rect.collidepoint(bullet[0]):
-                    game_over()
+                    game_over(score)
                 if bullet[0][1] > height:
                     board.bullets.pop(board.bullets.index(bullet))
             if board.board == [[0] * 9 for _ in range(4)]:
-                return 0
+                return score
             board.render(screen)
+            print_score(score)
             pygame.display.flip()
         else:
             for event in pygame.event.get():
@@ -150,7 +168,7 @@ def level(num):
     pygame.quit()
 
 
-def boss_fight():
+def boss_fight(score):
     pygame.init()
     level_screen(-1)
     running = True
@@ -159,6 +177,7 @@ def boss_fight():
     laser_attack_started = False
     laser_hide_started = False
     paused = False
+    score = score
     BULLET_ATTACK = pygame.USEREVENT + 1
     CIRCLE_ATTACK = pygame.USEREVENT + 2
     RAGE_ATTACK = pygame.USEREVENT + 3
@@ -268,6 +287,7 @@ def boss_fight():
                 pygame.draw.rect(screen, (255, 255, 255), (bullet[0], bullet[1], 2, 10))
                 if bs.rect.collidepoint(bullet):
                     bs.hp -= 1
+                    score += 10
                     bullets.pop(bullets.index(bullet))
                 if bullet[1] < 0:
                     bullets.pop(bullets.index(bullet))
@@ -275,13 +295,13 @@ def boss_fight():
                 bullet[1] += v_bullet / fps
                 pygame.draw.rect(screen, (255, 0, 0), (bullet[0], bullet[1], 2, 10))
                 if player.rect.collidepoint(bullet):
-                    game_over()
+                    game_over(score)
                 if bullet[1] > height:
                     bs.bullets.pop(bs.bullets.index(bullet))
             for circle in bs.circles:
                 c = Circle(*circle, circles)
                 if pygame.sprite.collide_mask(c, player):
-                    game_over()
+                    game_over(score)
                 if c.rect.x + c.rect.w < 0 or c.rect.x > width:
                     if circle in bs.circles:
                         bs.circles.pop(bs.circles.index(circle))
@@ -296,7 +316,7 @@ def boss_fight():
                 if laser[1]:
                     las = Laser(laser[0], lasers)
                     if pygame.sprite.spritecollideany(las, pl):
-                        game_over()
+                        game_over(score)
                 else:
                     pygame.draw.rect(screen, (255, 255, 255), (laser[0] + 11, 0, 3, height))
             lasers.draw(screen)
@@ -304,6 +324,7 @@ def boss_fight():
             if bs.hp <= 0:
                 congratulation()
             time.tick(fps)
+            print_score(score)
             pygame.display.flip()
         else:
             for event in pygame.event.get():
@@ -319,6 +340,16 @@ def boss_fight():
             screen.blit(text, (text_x, text_y))
             pygame.display.flip()
     pygame.quit()
+
+
+def print_score(num):
+    pygame.init()
+    font = pygame.font.Font('font/Kemco Pixel Bold.ttf', 30)
+    text = font.render(f"{num}", True, (255, 255, 255))
+    text_x = width - text.get_width()
+    text_y = 0
+    screen.blit(text, (text_x, text_y))
+    pygame.display.flip()
 
 
 def level_screen(num):
@@ -345,7 +376,14 @@ def level_screen(num):
     time.sleep(1)
 
 
-def game_over():
+def game_over(score):
+    replace = False
+    with open('score.txt') as sc:
+        if int(sc.read()) < score:
+            replace = True
+    if replace:
+        with open('score.txt', 'w') as sc:
+            sc.write(str(score))
     pygame.init()
     menu = pygame.sprite.Group()
     background = Background(menu)
@@ -359,8 +397,16 @@ def game_over():
     text = font.render("GAME OVER", True, (255, 255, 255))
     text_x = background.rect.w // 2 - text.get_width() // 2
     text_y = 100
+    score_text = font.render("YOUR SCORE:", True, (255, 255, 255))
+    text_score_x = background.rect.w // 2 - score_text.get_width() // 2
+    text_score_y = retry_button.rect.y + retry_button.rect.h + 50
+    num_text = font.render(f"{score}", True, (255, 255, 255))
+    text_num_x = background.rect.w // 2 - num_text.get_width() // 2
+    text_num_y = text_score_y + score_text.get_height() + 50
     menu.draw(screen)
     screen.blit(text, (text_x, text_y))
+    screen.blit(score_text, (text_score_x, text_score_y))
+    screen.blit(num_text, (text_num_x, text_num_y))
     pygame.display.flip()
     running = True
     while running:
