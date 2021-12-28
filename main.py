@@ -290,6 +290,8 @@ def boss_fight(score):
                     score += 10
                     bullets.pop(bullets.index(bullet))
                 if bullet[1] < 0:
+                    if score - 10 >= 0:
+                        score -= 10
                     bullets.pop(bullets.index(bullet))
             for bullet in bs.bullets:
                 bullet[1] += v_bullet / fps
